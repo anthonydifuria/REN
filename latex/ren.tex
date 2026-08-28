@@ -1,0 +1,244 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{cite}
+
+\geometry{margin=2.5cm}
+
+\title{The REN Formula: Construction, Properties, and Application in Hutchinson Synthesis}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+\newpage
+
+\section{Introduction}
+
+This document presents a family of polar curves named \textbf{REN (Radial Exponential Normalised)}, designed with the following goals:
+\begin{itemize}
+    \item maximum formal simplicity
+    \item automatic normalisation
+    \item high geometric expressiveness
+\end{itemize}
+
+The formula evolves from a fully symmetric base version to deformed, locally controllable shapes.
+
+\section{The Base REN Formula}
+
+The fundamental formula is:
+
+\begin{equation}
+r(\theta) = \exp\left(-\lambda \left| \sin(k\theta) \right|^q \right)
+\end{equation}
+
+\subsection{Definition and Parameters}
+\begin{itemize}
+    \item $k \in \mathbb{N}^+$: number of lobes
+    \item $\lambda > 0$: depth of the minima
+    \item $q > 0$: shape control (sharpness)
+\end{itemize}
+
+\subsection{Properties}
+\begin{itemize}
+    \item $r_{max} = 1$ (normalisation)
+    \item periodicity: $\frac{2\pi}{k}$
+    \item full symmetry
+\end{itemize}
+
+\subsection{Geometric Interpretation}
+
+The function $\sin(k\theta)$ defines an angular distance from the symmetry points.
+The exponential introduces a controlled decay.
+
+\section{Extending REN with Angular Mobility}
+
+\subsection{Limitations of the Base Form}
+
+The base formula has:
+\begin{itemize}
+    \item a uniform distribution of lobes
+    \item no possibility of local clustering
+\end{itemize}
+
+To overcome these limitations, we introduce a function $\phi(\theta)$ and define:
+
+\begin{equation}
+r(\theta) = \exp\left(-\lambda \left| \sin(k\phi(\theta)) \right|^q \right)
+\end{equation}
+
+\subsection{Simple Warp (Without Integrals)}
+
+\begin{equation}
+\phi(\theta) = \theta + \mu \sin(\theta - \theta_0)
+\end{equation}
+
+Parameters: $\theta_0$ is the cluster position, $\mu$ the deformation
+intensity. This simple warp does not guarantee proportional
+redistribution and may introduce global distortion.
+
+\subsection{Proportional Reparameterisation (CDF)}
+
+To redistribute angular space without distortion, we define a density:
+
+\begin{equation}
+w(t) = 1 + \mu e^{\kappa \cos(t - \theta_0)}
+\end{equation}
+
+\begin{equation}
+F(\theta) = \int_0^\theta w(t)\,dt
+\end{equation}
+
+\begin{equation}
+\phi(\theta) = \frac{2\pi}{F(2\pi)} F(\theta)
+\end{equation}
+
+\subsection{General REN Formula}
+
+\begin{equation}
+r(\theta) = \exp\left(-\lambda \left| \sin(k\phi(\theta)) \right|^q \right)
+\end{equation}
+
+\subsection{Interpretation of the Extended Parameters}
+\begin{itemize}
+    \item $\theta_0$: cluster center
+    \item $\mu$: clustering intensity
+    \item $\kappa$: cluster width
+\end{itemize}
+
+\subsection{Limit Behaviour}
+\begin{itemize}
+    \item $\mu = 0 \Rightarrow$ classic REN
+    \item $\kappa \to \infty \Rightarrow$ point cluster
+\end{itemize}
+
+\section{Applications}
+
+\subsection{General Applications}
+\begin{itemize}
+    \item generation of natural shapes
+    \item parametric design
+    \item biological modelling
+\end{itemize}
+
+\subsection{REN in Hutchinson Synthesis}
+\label{sec:hutchinson}
+
+REN was introduced as the geometric constraint used to shape the spatial
+dimension of \textbf{Hutchinson Synthesis}, a parametric additive synthesis
+system organising sound events over an $N$-dimensional hypervolume of time,
+frequency, amplitude and spatial direction \cite{hutchinsonrepo2026}.
+This section documents how the base formula above is applied there; a
+standalone, dependency-free re-implementation of the same mechanism is
+provided in \texttt{../hutchinson\_synthesis\_application/} for reference.
+
+\subsubsection{Role in the Synthesiser}
+
+In Hutchinson Synthesis, azimuth and elevation on the sphere $S^2$ are
+treated as two effective dimensions of the sound parameter space, sampled
+like any other (frequency, time, amplitude) via the system's stochastic
+point-process framework (GIGP). REN is layered on top of that sampling as
+an \emph{acceptance-rejection filter}: it does not replace the point
+process governing where events tend to occur, it restricts the admissible
+region on the sphere to a small number of non-convex ``lobes'', producing
+sharp source localisation with near-total exclusion between them.
+
+\subsubsection{From One Curve to One Flower per Niche}
+
+The 1D formula above defines a single boundary curve over the full
+angular range $[0, 2\pi)$. In Hutchinson Synthesis it is applied locally,
+once per acoustic niche:
+
+\begin{enumerate}
+  \item A center $(\text{az}_c, \text{el}_c)$ is placed on the sphere for
+  each niche. Centers are spread apart via a repulsive relaxation on
+  $S^2$: each point is pushed away from every other point, the resulting
+  force is projected onto the local tangent plane (to keep the point on
+  the sphere), and the point is renormalised after each step. This
+  produces approximately equidistant centers regardless of how many
+  niches are active.
+  \item Around each center, a local tangent-plane (gnomonic) projection is
+  built: any point $(\text{az}, \text{el})$ on the sphere is mapped to
+  local polar coordinates $(r, \varphi)$ relative to that center.
+  \item The REN boundary is evaluated in this local frame as
+  \begin{equation}
+    r_{\text{REN}}(\varphi) = R \cdot \exp\!\left(-\lambda
+    \left|\sin\!\left(\tfrac{k\varphi}{2}\right)\right|^q\right)
+    \label{eq:ren_local}
+  \end{equation}
+  where $R$ is the niche's radius (auto-scaled from the number of active
+  niches, or user-defined). The angle is halved with respect to the base
+  formula of eq.~(1) so that the intended number of lobes $k$ is recovered
+  after the tangent-plane projection.
+\end{enumerate}
+
+\subsubsection{Magnet and Guaranteed Clamp}
+
+Each candidate event position is first assigned to its nearest niche
+center (spherical distance), then pulled toward that niche's REN lobes
+with a \texttt{force} parameter $\in [0,1]$:
+
+\begin{equation}
+r_{\text{final}} = r_{\text{curr}}(1-\text{force}) +
+\min(r_{\text{curr}}, r_{\text{REN}}(\varphi))\cdot\text{force}
+\end{equation}
+
+At \texttt{force} $=0$ the position is left untouched; at \texttt{force}
+$=1$ a final clamp step guarantees the position falls on or inside the
+lobes, projecting it onto the nearest lobe border if it would otherwise
+fall outside. This is the mechanism behind the REN spatial-distribution
+audio and visual examples available in the \texttt{examples/} folder of
+the repository \cite{hutchinsonrepo2026}: with high $\lambda$, sources
+concentrate tightly in the $k$ lobes, producing near-total spatial silence
+in the excluded zones between them.
+
+\subsubsection{A Note on the Codebase}
+
+The Hutchinson Synthesis codebase also contains a separate, exploratory
+function (\texttt{ren\_2d}) that combines independent azimuth and
+elevation lobe counts multiplicatively. It is not invoked by the
+generation pipeline and is not the mechanism described above or used to
+produce the published results; it is mentioned here only to avoid
+confusion for anyone reading that source directly.
+
+\section{Conclusion}
+
+The REN formula is a minimal yet highly flexible system for generating
+complex radial shapes, with direct control over both global and local
+structure. Its application inside Hutchinson Synthesis, described above,
+shows how the same compact 1D curve can be lifted onto the sphere $S^2$ to
+constrain the spatial dimension of a sound synthesiser, without changing
+its mathematical core.
+
+\newpage
+
+\begin{thebibliography}{9}
+
+\bibitem{lame}
+G. Lam\'e, \textit{Sur les surfaces isothermes}, 1838.
+
+\bibitem{fourier}
+J. Fourier, \textit{Th\'eorie analytique de la chaleur}, 1822.
+
+\bibitem{euler}
+L. Euler, \textit{Introductio in analysin infinitorum}, 1748.
+
+\bibitem{prob}
+W. Feller, \textit{An Introduction to Probability Theory}, Wiley, 1968.
+
+\bibitem{shape}
+J. Gielis, ``A generic geometric transformation that unifies a wide range of natural and abstract shapes'', \textit{American Journal of Botany}, 2003.
+
+\bibitem{hutchinsonrepo2026}
+A. Di Furia, N. Andreuccetti, \textit{Hutchinson Synthesis} [software repository], \url{https://github.com/anthonydifuria/hutchinson-synthesis}, 2026.
+
+\end{thebibliography}
+
+\end{document}

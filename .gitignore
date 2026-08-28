@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# LaTeX: ignore every generated file in latex/, keep only sources and the
+# final PDF (covers aux/log/out/toc/bbl/blg and any future build byproduct
+# regardless of toolchain, instead of listing extensions one by one)
+latex/*
+!latex/*.tex
+!latex/*.pdf
+
+# Editor / OS
+.DS_Store
+.vscode/

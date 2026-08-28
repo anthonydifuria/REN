@@ -1,0 +1,44 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+
+title: "REN: Radial Exponential Normalised"
+version: 1.0.0
+date-released: 2026-08-28
+
+authors:
+  - family-names: Di Furia
+    given-names: Anthony
+
+repository-code: https://github.com/anthonydifuria/REN
+url: https://github.com/anthonydifuria/REN
+
+license: GPL-3.0-or-later
+
+keywords:
+  - parametric curves
+  - polar equation
+  - radial function
+  - shape generation
+  - spatial audio
+  - higher-order ambisonics
+
+preferred-citation:
+  type: software
+  title: "REN: Radial Exponential Normalised"
+  authors:
+    - family-names: Di Furia
+      given-names: Anthony
+  year: 2026
+  url: https://github.com/anthonydifuria/REN
+
+references:
+  - type: conference-paper
+    title: "Hutchinson Synthesis: Parametric Additive Synthesis via Probabilistic Distributions over the N-Dimensional Hypervolume of Time, Frequency, Amplitude and Spatial Direction in HOA"
+    authors:
+      - family-names: Di Furia
+        given-names: Anthony
+      - family-names: Andreuccetti
+        given-names: Nicoletta
+    year: 2026
+    conference:
+      name: "I3DA 2026"
